@@ -45,8 +45,7 @@ router.get('/:id', async (req, res, next) => {
 
 // CREATE NEW TIMELINE
 router.post('/', async (req, res, next) => {
-    const { title, description } = req.body
-    const timeline = await new Timeline({ title, description }).save()
+    const timeline = await new Timeline({ ...req.body }).save()
     try {
         res.json({
             type: "CREATE",
@@ -57,7 +56,7 @@ router.post('/', async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to create timeline: ${title}`,
+            message: `failed to create timeline: ${req.body.title}`,
             e
         })
     }
@@ -65,7 +64,7 @@ router.post('/', async (req, res, next) => {
 
 // UPDATE SINGLE TIMELINE BY ID
 router.put('/:id', async (req, res, next) => {
-    const updatedTimeline = await Timeline.findOneAndUpdate({ _id: req.params.id }, {...req.body}, { new: true })
+    const updatedTimeline = await Timeline.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
         res.json({
             type: "UPDATE",
