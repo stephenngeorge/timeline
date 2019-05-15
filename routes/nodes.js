@@ -1,4 +1,4 @@
-import { Router } from 'router'
+import { Router } from 'express'
 
 // import models
 import { Node } from '../models'
@@ -82,7 +82,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE SINGLE NODE BY ID
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
     const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
     try {
         res.json({
