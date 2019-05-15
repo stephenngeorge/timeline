@@ -5,6 +5,7 @@ import { User } from '../models'
 
 const router = new Router()
 
+// GET USER COUNT
 router.get('/', async (req, res, next) => {
     const users = await User.find()
     try {
@@ -18,6 +19,26 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+// GET SINGLE USER BY ID
+router.get('/:id', async (req, res, next) => {
+    const user = await User.findOne({ _id: req.params.id })
+    try {
+        res.json({
+            type: "READ",
+            message: `found user: ${user.username}`,
+            data: user
+        })
+    }
+    catch(e) {
+        res.status(400).json({
+            type: "ERROR",
+            message: `failed to find user: ${req.params.id}`,
+            e
+        })
+    }
+})
+
+// CREATE NEW USER
 router.post('/', async (req, res, next) => {
     const { username, password } = req.body
     const user = await new User({ username, password }).save()
@@ -26,7 +47,7 @@ router.post('/', async (req, res, next) => {
         res.json({
             type: "CREATE",
             message: `created new user: ${user.username}`,
-            user
+            data: user
         })
     }
     catch(e) {
@@ -38,13 +59,14 @@ router.post('/', async (req, res, next) => {
     }
 })
 
+// UPDATE SINGLE USER BY ID
 router.put('/:id', async (req, res, next) => {
-    const updatedUser = await User.findOneAndUpdate({_id: req.params.id}, {...req.body, updated_at: Date.now()}, {new: true})
+    const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
         res.json({
             type: "UPDATE",
-            message: `successfully updated user: ${updatedUser.username}`,
-            updatedUser
+            message: `updated user: ${updatedUser.username}`,
+            data: updatedUser
         })
     }
     catch(e) {
@@ -56,13 +78,14 @@ router.put('/:id', async (req, res, next) => {
     }
 })
 
+// DELETE SINGLE USER BY ID
 router.delete('/:id', async (req, res, next) => {
-    const deletedUser = await User.findOneAndDelete({_id: req.params.id})
+    const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
     try {
         res.json({
             type: "DELETE",
-            message: `successfully deleted user: ${deletedUser.username}`,
-            deletedUser
+            message: `deleted user: ${deletedUser.username}`,
+            data: deletedUser
         })
     }
     catch(e) {
