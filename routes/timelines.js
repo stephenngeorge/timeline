@@ -24,9 +24,9 @@ router.get('/:userId', async (req, res, next) => {
     }
 })
 
-// GET SINLGE TIMELINE BY ID
+// GET SINGLE TIMELINE BY ID
 router.get('/:id', async (req, res, next) => {
-    const timeline = await Timeline.findOne({ _id: req.params.id })
+    const timeline = await Timeline.findOne({ _id: req.params.id }).populate('author').populate('nodes').exec()
     try {
         res.json({
             type: "READ",

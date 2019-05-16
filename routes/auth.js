@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import bcrypt from 'bcrypt'
 
 // import models
 import { User } from '../models'
@@ -21,7 +22,7 @@ router.get('/', async (req, res, next) => {
 
 // GET SINGLE USER BY ID
 router.get('/:id', async (req, res, next) => {
-    const user = await User.findOne({ _id: req.params.id })
+    const user = await User.findOne({ _id: req.params.id }).populate('timelines').exec()
     try {
         res.json({
             type: "READ",
@@ -39,21 +40,36 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // CREATE NEW USER
-router.post('/', async (req, res, next) => {
-    const user = await new User({ ...req.body }).save()
-    try {
-        res.json({
-            type: "CREATE",
-            message: `created new user: ${user.username}`,
-            data: user
-        })
-    }
-    catch(e) {
+router.post('/signup', async (req, res, next) => {
+    // check username availability
+    const checkUsername = await User.find({ username: req.body.username })
+    if (checkUsername.length !== 0) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to create user: ${req.body.username}`,
-            e
+            message: `username: ${req.body.username} is taken`
         })
+    }
+        
+    // create user if username is available
+    else {
+        // hash password
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        // create new user
+        const user = await new User({ ...req.body, password: hashedPassword }).save()
+        try {
+            res.json({
+                type: "CREATE",
+                message: `created new user: ${user.username}`,
+                data: user
+            })
+        }
+        catch(e) {
+            res.status(400).json({
+                type: "ERROR",
+                message: `failed to create user: ${req.body.username}`,
+                e
+            })
+        }
     }
 })
 

@@ -4,7 +4,11 @@ const TimelineSchema = new Schema({
     title: { type: String, required: true },
     description: String,
     created_at: { type: Date, default: Date.now },
-    updated_at: { type: Date, default: Date.now }
+    updated_at: { type: Date, default: Date.now },
+    nodes: [{type: Schema.Types.ObjectId, ref: 'node'}],
+    tags: [String],
+    author: { type: Schema.Types.ObjectId, ref: 'user' },
+    members: [{ type: Schema.Types.ObjectId, ref: 'user' }]
 })
 
 export default model('timeline', TimelineSchema)

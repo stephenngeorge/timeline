@@ -7,7 +7,7 @@ const router = new Router()
 
 // GET ALL NODES FOR A GIVEN TIMELINE
 router.get('/:timelineId', async (req, res, next) => {
-    const nodes = await Node.find({ timeline: req.params.timelineId })
+    const nodes = await Node.find({ timeline: req.params.timelineId }).populate('timeline').exec()
     try {
         res.json({
             type: "READ",
@@ -26,7 +26,7 @@ router.get('/:timelineId', async (req, res, next) => {
 
 // GET SINGLE NODE BY ID
 router.get('/:id', async (req, res, next) => {
-    const node = await Node.findOne({ _id: req.params.id })
+    const node = await Node.findOne({ _id: req.params.id }).populate('timeline').exec()
     try {
         res.json({
             type: "READ",
