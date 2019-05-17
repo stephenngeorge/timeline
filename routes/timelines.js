@@ -1,12 +1,14 @@
 import { Router } from 'express'
 
+import verifyAuth from '../middleware/verifyAuth'
+
 // import models
 import { Timeline } from '../models'
 
 const router = new Router()
 
 // GET ALL TIMELINES FOR GIVEN USER
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', verifyAuth, async (req, res, next) => {
     const timelines = await Timeline.find({ author: req.params.userId })
     try {
         res.json({
@@ -25,7 +27,7 @@ router.get('/:userId', async (req, res, next) => {
 })
 
 // GET SINGLE TIMELINE BY ID
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', verifyAuth, async (req, res, next) => {
     const timeline = await Timeline.findOne({ _id: req.params.id }).populate('author').populate('nodes').exec()
     try {
         res.json({
@@ -44,7 +46,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // CREATE NEW TIMELINE
-router.post('/', async (req, res, next) => {
+router.post('/', verifyAuth, async (req, res, next) => {
     const timeline = await new Timeline({ ...req.body }).save()
     try {
         res.json({
@@ -63,7 +65,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // UPDATE SINGLE TIMELINE BY ID
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', verifyAuth, async (req, res, next) => {
     const updatedTimeline = await Timeline.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
         res.json({
@@ -82,7 +84,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE SINGLE TIMELINE BY ID
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyAuth, async (req, res, next) => {
     const deletedTimeline = await Timeline.findOneAndDelete({ _id: req.params.id })
     try {
         res.json({

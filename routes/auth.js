@@ -2,6 +2,8 @@ import { Router } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+import verifyAuth from '../middleware/verifyAuth'
+
 // import models
 import { User } from '../models'
 
@@ -103,7 +105,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 // UPDATE SINGLE USER BY ID
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', verifyAuth, async (req, res, next) => {
     const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
         res.json({
@@ -122,7 +124,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE SINGLE USER BY ID
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyAuth, async (req, res, next) => {
     const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
     try {
         res.json({

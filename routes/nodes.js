@@ -1,12 +1,14 @@
 import { Router } from 'express'
 
+import verifyAuth from '../middleware/verifyAuth'
+
 // import models
 import { Node } from '../models'
 
 const router = new Router()
 
 // GET ALL NODES FOR A GIVEN TIMELINE
-router.get('/:timelineId', async (req, res, next) => {
+router.get('/:timelineId', verifyAuth, async (req, res, next) => {
     const nodes = await Node.find({ timeline: req.params.timelineId }).populate('timeline').exec()
     try {
         res.json({
@@ -25,7 +27,7 @@ router.get('/:timelineId', async (req, res, next) => {
 })
 
 // GET SINGLE NODE BY ID
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', verifyAuth, async (req, res, next) => {
     const node = await Node.findOne({ _id: req.params.id }).populate('timeline').exec()
     try {
         res.json({
@@ -44,7 +46,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // CREATE SINGLE NODE
-router.post('/', async (req, res, next) => {
+router.post('/', verifyAuth, async (req, res, next) => {
     const node = await new Node({ ...req.body }).save()
     try {
         res.json({
@@ -63,7 +65,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // UPDATE SINGLE NODE BY ID
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', verifyAuth, async (req, res, next) => {
     const updatedNode = await Node.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
         res.json({
@@ -82,7 +84,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE SINGLE NODE BY ID
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyAuth, async (req, res, next) => {
     const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
     try {
         res.json({
