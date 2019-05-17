@@ -3,7 +3,7 @@ import { Router } from 'express'
 import verifyAuth from '../middleware/verifyAuth'
 
 // import models
-import { Node } from '../models'
+import { Node, Timeline } from '../models'
 
 const router = new Router()
 
@@ -47,7 +47,13 @@ router.get('/:id', verifyAuth, async (req, res, next) => {
 
 // CREATE SINGLE NODE
 router.post('/', verifyAuth, async (req, res, next) => {
-    const node = await new Node({ ...req.body }).save()
+    // find timeline from request body
+    const timeline = await Timeline.findOne({ _id: req.body.timelineId })
+    // create node with timeline id, add node id to timeline.nodes
+    const node = await new Node({ ...req.body, timeline: timeline._id }).save()
+    await timeline.nodes.push(node._id)
+    await timeline.save()
+    
     try {
         res.json({
             type: "CREATE",
