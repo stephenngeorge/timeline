@@ -20,8 +20,7 @@ router.get('/:timelineId', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to find nodes for timeline: ${req.params.timelineId}`,
-            e
+            message: `failed to find nodes for timeline: ${req.params.timelineId}`
         })
     }
 })
@@ -39,8 +38,7 @@ router.get('/:id', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to find node: ${req.params.id}`,
-            e
+            message: `failed to find node: ${req.params.id}`
         })
     }
 })
@@ -64,8 +62,7 @@ router.post('/', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to create node: ${req.body.title}`,
-            e
+            message: `failed to create node: ${req.body.title}`
         })
     }
 })
@@ -83,8 +80,7 @@ router.put('/:id', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to update node: ${ req.params.id }`,
-            e
+            message: `failed to update node: ${ req.params.id }`
         })
     }
 })
@@ -92,7 +88,14 @@ router.put('/:id', verifyAuth, async (req, res, next) => {
 // DELETE SINGLE NODE BY ID
 router.delete('/:id', verifyAuth, async (req, res, next) => {
     try {
+        // returns deleted document
         const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
+        // find timeline that contained deletednode
+        const timeline = await Timeline.findOne({ _id: deletedNode._id })
+        // remove node from timeline.nodes
+        await timeline.nodes.pull(deletedNode._id)
+        await timeline.save()
+
         res.json({
             type: "DELETE",
             message: `deleted node: ${deletedNode.title}`,
@@ -102,8 +105,7 @@ router.delete('/:id', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to delete node: ${req.params.id}`,
-            e
+            message: `failed to delete node: ${req.params.id}`
         })
     }
 })

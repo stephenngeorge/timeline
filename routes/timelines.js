@@ -3,7 +3,7 @@ import { Router } from 'express'
 import verifyAuth from '../middleware/verifyAuth'
 
 // import models
-import { Timeline, User } from '../models'
+import { Node, Timeline, User } from '../models'
 
 const router = new Router()
 
@@ -128,7 +128,15 @@ router.put('/:id/deletemember', verifyAuth, async (req, res, next) => {
 // DELETE SINGLE TIMELINE BY ID
 router.delete('/:id', verifyAuth, async (req, res, next) => {
     try {
+        // delete all nodes from this timeline
+        await Node.deleteMany({ timeline: req.params.id })
+        // delete timeline
         const deletedTimeline = await Timeline.findOneAndDelete({ _id: req.params.id })
+        // remove timeline from author.timelines
+        const author = await User.findOne({ _id: deletedTimeline.author })
+        await author.timelines.pull(deletedTimeline._id)
+        await author.save()
+
         res.json({
             type: "DELETE",
             message: `deleted timeline: ${deletedTimeline.title}`,
