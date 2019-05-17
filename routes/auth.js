@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import { verifyAuth, verifyPassword } from '../middleware'
+import { validate } from '../utils'
 
 // import models
 import { User } from '../models'
@@ -53,8 +54,16 @@ router.post('/signup', async (req, res, next) => {
         })
     }
     // create user if username is available
-    // hash password
+    // validate & hash password
+    const validPassword = validate(req.body.password)
+    if (!validPassword) {
+        return res.status(400).json({
+            type: "ERROR",
+            message: "invalid password"
+        })
+    }
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    
     // create new user
     const user = await new User({ ...req.body, password: hashedPassword }).save()
     try {
