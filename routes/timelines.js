@@ -3,7 +3,7 @@ import { Router } from 'express'
 import verifyAuth from '../middleware/verifyAuth'
 
 // import models
-import { Timeline } from '../models'
+import { Timeline, User } from '../models'
 
 const router = new Router()
 
@@ -47,7 +47,13 @@ router.get('/:id', verifyAuth, async (req, res, next) => {
 
 // CREATE NEW TIMELINE
 router.post('/', verifyAuth, async (req, res, next) => {
-    const timeline = await new Timeline({ ...req.body }).save()
+    // find user from decoded token info
+    const author = await User.findOne({ _id: req.userData.userId })
+    // create timeline with author id, add timeline id to User author.timelines
+    const timeline = await new Timeline({ ...req.body, author: author._id }).save()
+    await author.timelines.push(timeline._id)
+    await author.save()
+    
     try {
         res.json({
             type: "CREATE",

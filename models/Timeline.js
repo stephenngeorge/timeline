@@ -7,7 +7,7 @@ const TimelineSchema = new Schema({
     updated_at: { type: Date, default: Date.now },
     nodes: [{type: Schema.Types.ObjectId, ref: 'node'}],
     tags: [String],
-    author: { type: Schema.Types.ObjectId, ref: 'user' },
+    author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     members: [{ type: Schema.Types.ObjectId, ref: 'user' }]
 })
 

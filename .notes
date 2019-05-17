@@ -1,10 +1,10 @@
 [ ] -- cascade deletes
 
-[ ] -- POST route auth/signup
+[x] -- POST route auth/signup
 ------ [x] -- check db for username available?
------- [ ] -- validate password (min/max length, must include letters and numbers)
+------ [x] -- validate password (min/max length, must include letters and numbers)
 ------ [x] -- hash password
 
-[ ] -- GET route auth/login
------- [ ] -- check password against hash
------- [ ] -- return jwt & authenticated user object
+[x] -- GET route auth/login
+------ [x] -- check password against hash
+------ [x] -- return jwt & authenticated user object
