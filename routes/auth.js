@@ -6,7 +6,7 @@ import { verifyAuth, verifyPassword } from '../middleware'
 import { validate } from '../utils'
 
 // import models
-import { User } from '../models'
+import { Node, Timeline, User } from '../models'
 
 const router = new Router()
 
@@ -132,7 +132,16 @@ router.put('/:id', verifyAuth, async (req, res, next) => {
 // DELETE SINGLE USER BY ID
 router.delete('/:id', verifyAuth, verifyPassword, async (req, res, next) => {
     try {
+        // find all timelines for this user
+        const timelines = await Timeline.find({ author: req.params.id })
+        timelines.forEach(timeline => {
+            // loop through and remove all nodes for each timeline
+            await Node.deleteMany({ timeline: timeline._id })
+            await Timeline.findOneAndDelete({ _id: timeline._id })
+        })
+        // delete user
         const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
+        
         res.json({
             type: "DELETE",
             message: `deleted user: ${deletedUser.username}`,
