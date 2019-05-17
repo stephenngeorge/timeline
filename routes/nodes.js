@@ -9,8 +9,8 @@ const router = new Router()
 
 // GET ALL NODES FOR A GIVEN TIMELINE
 router.get('/:timelineId', verifyAuth, async (req, res, next) => {
-    const nodes = await Node.find({ timeline: req.params.timelineId }).populate('timeline').exec()
     try {
+        const nodes = await Node.find({ timeline: req.params.timelineId }).populate('timeline').exec()
         res.json({
             type: "READ",
             message: `found all nodes for timeline: ${req.params.timelineId}`,
@@ -28,8 +28,8 @@ router.get('/:timelineId', verifyAuth, async (req, res, next) => {
 
 // GET SINGLE NODE BY ID
 router.get('/:id', verifyAuth, async (req, res, next) => {
-    const node = await Node.findOne({ _id: req.params.id }).populate('timeline').exec()
     try {
+        const node = await Node.findOne({ _id: req.params.id }).populate('timeline').exec()
         res.json({
             type: "READ",
             message: `found node: ${req.params.id}`,
@@ -47,14 +47,14 @@ router.get('/:id', verifyAuth, async (req, res, next) => {
 
 // CREATE SINGLE NODE
 router.post('/', verifyAuth, async (req, res, next) => {
-    // find timeline from request body
-    const timeline = await Timeline.findOne({ _id: req.body.timelineId })
-    // create node with timeline id, add node id to timeline.nodes
-    const node = await new Node({ ...req.body, timeline: timeline._id }).save()
-    await timeline.nodes.push(node._id)
-    await timeline.save()
-    
     try {
+        // find timeline from request body
+        const timeline = await Timeline.findOne({ _id: req.body.timelineId })
+        // create node with timeline id, add node id to timeline.nodes
+        const node = await new Node({ ...req.body, timeline: timeline._id }).save()
+        await timeline.nodes.push(node._id)
+        await timeline.save()
+    
         res.json({
             type: "CREATE",
             message: `created node: ${node.title}`,
@@ -72,8 +72,8 @@ router.post('/', verifyAuth, async (req, res, next) => {
 
 // UPDATE SINGLE NODE BY ID
 router.put('/:id', verifyAuth, async (req, res, next) => {
-    const updatedNode = await Node.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
+        const updatedNode = await Node.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
         res.json({
             type: "UPDATE",
             message: `updated node: ${updatedNode.title}`,
@@ -91,8 +91,8 @@ router.put('/:id', verifyAuth, async (req, res, next) => {
 
 // DELETE SINGLE NODE BY ID
 router.delete('/:id', verifyAuth, async (req, res, next) => {
-    const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
     try {
+        const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
         res.json({
             type: "DELETE",
             message: `deleted node: ${deletedNode.title}`,

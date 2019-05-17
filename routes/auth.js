@@ -26,8 +26,8 @@ router.get('/', async (req, res, next) => {
 
 // GET SINGLE USER BY ID
 router.get('/:id', async (req, res, next) => {
-    const user = await User.findOne({ _id: req.params.id }).populate('timelines').exec()
     try {
+        const user = await User.findOne({ _id: req.params.id }).populate('timelines').exec()
         res.json({
             type: "READ",
             message: `found user: ${user.username}`,
@@ -37,36 +37,35 @@ router.get('/:id', async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to find user: ${req.params.id}`,
-            e
+            message: `failed to find user: ${req.params.id}`
         })
     }
 })
 
 // CREATE NEW USER
 router.post('/signup', async (req, res, next) => {
-    // check username availability
-    const checkUsername = await User.find({ username: req.body.username })
-    if (checkUsername.length !== 0) {
-        return res.status(400).json({
-            type: "ERROR",
-            message: `username: ${req.body.username} is taken`
-        })
-    }
-    // create user if username is available
-    // validate & hash password
-    const validPassword = validate(req.body.password)
-    if (!validPassword) {
-        return res.status(400).json({
-            type: "ERROR",
-            message: "invalid password"
-        })
-    }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    
-    // create new user
-    const user = await new User({ ...req.body, password: hashedPassword }).save()
     try {
+        // check username availability
+        const checkUsername = await User.find({ username: req.body.username })
+        if (checkUsername.length !== 0) {
+            return res.status(400).json({
+                type: "ERROR",
+                message: `username: ${req.body.username} is taken`
+            })
+        }
+        // create user if username is available
+        // validate & hash password
+        const validPassword = validate(req.body.password)
+        if (!validPassword) {
+            return res.status(400).json({
+                type: "ERROR",
+                message: "invalid password"
+            })
+        }
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    
+        // create new user
+        const user = await new User({ ...req.body, password: hashedPassword }).save()
         res.json({
             type: "CREATE",
             message: `created new user: ${user.username}`,
@@ -76,8 +75,7 @@ router.post('/signup', async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: `failed to create user: ${req.body.username}`,
-            e
+            message: `failed to create user: ${req.body.username}`
         })
     }
 })
@@ -115,8 +113,8 @@ router.post('/login', async (req, res, next) => {
 
 // UPDATE SINGLE USER BY ID
 router.put('/:id', verifyAuth, async (req, res, next) => {
-    const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
     try {
+        const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
         res.json({
             type: "UPDATE",
             message: `updated user: ${updatedUser.username}`,
@@ -126,16 +124,15 @@ router.put('/:id', verifyAuth, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: "failed to update user",
-            e
+            message: "failed to update user"
         })
     }
 })
 
 // DELETE SINGLE USER BY ID
 router.delete('/:id', verifyAuth, verifyPassword, async (req, res, next) => {
-    const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
     try {
+        const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
         res.json({
             type: "DELETE",
             message: `deleted user: ${deletedUser.username}`,
@@ -145,8 +142,7 @@ router.delete('/:id', verifyAuth, verifyPassword, async (req, res, next) => {
     catch(e) {
         res.status(400).json({
             type: "ERROR",
-            message: "failed to delete user",
-            e
+            message: "failed to delete user"
         })
     }
 })
