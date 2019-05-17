@@ -1,4 +1,5 @@
 [ ] -- cascade deletes
+------ [ ] test all delete routes
 
 [x] -- POST route auth/signup
 ------ [x] -- check db for username available?
