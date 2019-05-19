@@ -1,4 +1,4 @@
-import { User } from '../models'
+import { Node, Timeline, User } from '../models'
 import { validate } from '../utils'
 
 import bcrypt from 'bcrypt'
@@ -125,6 +125,9 @@ export const deleteSingleUser = async (req, res, next) => {
     try {
         // DELETE TIMELINES AND NODES FOR THIS USER
         const deletedUser = await User.findOneAndDelete({ _id: req.params.id })
+        const timelines = deletedUser.timelines
+        await Timeline.deleteMany({ _id: {$in: timelines} })
+        await Node.deleteMany({ timeline: {$in: timelines} })
         
         res.json({
             type: "DELETE",

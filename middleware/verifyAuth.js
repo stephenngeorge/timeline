@@ -8,10 +8,11 @@ export default (req, res, next) => {
         next()
     }
     catch (e) {
-        return res.status(401).json({
+        res.status(401).json({
             type: "ERROR",
             message: `Auth Error: invalid/missing authorization header`,
             e
         })
+        next(e)
     }
 }
