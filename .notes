@@ -1,11 +1,6 @@
 [ ] -- cascade deletes
------- [ ] test all delete routes
+------ [x] test all delete routes
+------ [ ] test delete routes when there are multiple records (seed DB)
 
-[x] -- POST route auth/signup
------- [x] -- check db for username available?
------- [x] -- validate password (min/max length, must include letters and numbers)
------- [x] -- hash password
-
-[x] -- GET route auth/login
------- [x] -- check password against hash
------- [x] -- return jwt & authenticated user object
+[ ] -- routes for add & remove members from timeline
+[ ] -- double check all errors are being forwarded correctly

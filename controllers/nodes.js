@@ -83,7 +83,8 @@ export const deleteNode = async (req, res, next) => {
         // returns deleted document
         const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
         // find timeline that contained deletednode
-        const timeline = await Timeline.findOne({ _id: deletedNode._id })
+        const timeline = await Timeline.findOne({ _id: deletedNode.timeline })
+        console.log(timeline)
         // remove node from timeline.nodes
         await timeline.nodes.pull(deletedNode._id)
         await timeline.save()

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 // import middleware
-import verifyAuth from '../middleware/verifyAuth'
+import { verifyAuth, verifyPassword } from '../middleware'
 // import controllers
 import { nodesController } from '../controllers'
 
@@ -19,6 +19,6 @@ router.post('/', verifyAuth, nodesController.createNode)
 router.put('/:id', verifyAuth, nodesController.updateNode)
 
 // DELETE SINGLE NODE BY ID
-router.delete('/:id', verifyAuth, nodesController.deleteNode)
+router.delete('/:id', verifyAuth, verifyPassword, nodesController.deleteNode)
 
 export default router
