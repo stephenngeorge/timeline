@@ -39,7 +39,7 @@ export const getSingleNode = async (req, res, next) => {
 export const createNode = async (req, res, next) => {
     try {
         // find timeline from request body
-        const timeline = await Timeline.findOne({ _id: req.body.timelineId })
+        const timeline = await Timeline.findOne({ _id: req.body.timeline })
         // create node with timeline id, add node id to timeline.nodes
         const node = await new Node({ ...req.body, timeline: timeline._id }).save()
         await timeline.nodes.push(node._id)

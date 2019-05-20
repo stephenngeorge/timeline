@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import verifyAuth from '../middleware/verifyAuth'
+import { verifyAuth, verifyPassword } from '../middleware'
 // import controllers
 import { timelinesController } from '../controllers'
 
@@ -22,6 +22,6 @@ router.put('/:id/addmember', verifyAuth, timelinesController.addMember)
 router.put('/:id/deletemember', verifyAuth, timelinesController.removeMember)
 
 // DELETE SINGLE TIMELINE BY ID
-router.delete('/:id', verifyAuth, timelinesController.deleteTimeline)
+router.delete('/:id', verifyAuth, verifyPassword, timelinesController.deleteTimeline)
 
 export default router
