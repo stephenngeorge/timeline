@@ -68,6 +68,8 @@ export const createNode = async (req, res, next) => {
 export const updateNode = async (req, res, next) => {
     try {
         const updatedNode = await Node.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
+        const timeline = await Timeline.findOne({ _id: updatedNode.timeline })
+        timeline.updated_at = Date.now()
         res.json({
             type: "UPDATE",
             message: `updated node: ${updatedNode.title}`,
@@ -96,6 +98,7 @@ export const deleteNode = async (req, res, next) => {
         }
         // remove node from timeline.nodes
         await timeline.nodes.pull(deletedNode._id)
+        timeline.updated_at = Date.now()
         await timeline.save()
 
         res.json({

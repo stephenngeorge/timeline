@@ -4,3 +4,6 @@
 
 [x] -- routes for add & remove members from timeline
 [ ] -- double check all errors are being forwarded correctly
+
+[ ] -- timeline updated_at changes on node updates
+[ ] -- consider updated_at being array of objects: { timestamp: Date.now, description: String } <-- e.g. 'removed Node: NODE_ID' || 'updated title of Timeline: TIMELINE_ID'
