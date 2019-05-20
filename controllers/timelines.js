@@ -63,6 +63,10 @@ export const createTimeline = async (req, res, next) => {
 export const updateTimeline = async (req, res, next) => {
     try {
         const updatedTimeline = await Timeline.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
+        if (!req.userData.userId === updatedTimeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         res.json({
             type: "UPDATE",
             message: `updated timeline: ${updatedTimeline.title}`,

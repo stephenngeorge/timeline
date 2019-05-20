@@ -1,16 +1,16 @@
-function isLength(input, min, max) {
+export function isLength(input, min, max) {
     if (!typeof input === 'string') {
         return false
     }
     return input.trim().length <= max && input.trim().length >= min
 }
 
-function hasLetters(input) {
+export function hasLetters(input) {
     const letters = /[A-Za-z]/
     return input.match(letters)
 }
 
-function hasNumbers(input) {
+export function hasNumbers(input) {
     const numbers = /[0-9]/
     return input.match(numbers)
 }
