@@ -40,6 +40,11 @@ export const createNode = async (req, res, next) => {
     try {
         // find timeline from request body
         const timeline = await Timeline.findOne({ _id: req.body.timeline })
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         // create node with timeline id, add node id to timeline.nodes
         const node = await new Node({ ...req.body, timeline: timeline._id }).save()
         await timeline.nodes.push(node._id)
@@ -84,7 +89,11 @@ export const deleteNode = async (req, res, next) => {
         const deletedNode = await Node.findOneAndDelete({ _id: req.params.id })
         // find timeline that contained deletednode
         const timeline = await Timeline.findOne({ _id: deletedNode.timeline })
-        console.log(timeline)
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         // remove node from timeline.nodes
         await timeline.nodes.pull(deletedNode._id)
         await timeline.save()
