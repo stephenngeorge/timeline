@@ -2,5 +2,5 @@
 ------ [x] test all delete routes
 ------ [x] test delete routes when there are multiple records (seed DB)
 
-[ ] -- routes for add & remove members from timeline
+[x] -- routes for add & remove members from timeline
 [ ] -- double check all errors are being forwarded correctly

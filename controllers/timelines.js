@@ -63,6 +63,7 @@ export const createTimeline = async (req, res, next) => {
 export const updateTimeline = async (req, res, next) => {
     try {
         const updatedTimeline = await Timeline.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
+        // check user is author of this timeline
         if (!req.userData.userId === updatedTimeline.author) {
             const error = new Error('you are not the author of this timeline')
             next(error)
@@ -85,6 +86,11 @@ export const updateTimeline = async (req, res, next) => {
 export const addMember = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         await timeline.members.push(req.body.memberId)
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
@@ -106,6 +112,11 @@ export const addMember = async (req, res, next) => {
 export const removeMember = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         await timeline.members.pull(req.body.memberId)
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
@@ -128,6 +139,11 @@ export const removeMember = async (req, res, next) => {
 export const addTag = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         await timeline.tags.push(req.body.tag)
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
@@ -149,6 +165,11 @@ export const addTag = async (req, res, next) => {
 export const deleteTag = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
+        // check user is author of this timeline
+        if (!req.userData.userId === timeline.author) {
+            const error = new Error('you are not the author of this timeline')
+            next(error)
+        }
         await timeline.tags.pull(req.body.tag)
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
