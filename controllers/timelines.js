@@ -82,6 +82,7 @@ export const addMember = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
         await timeline.members.push(req.body.memberId)
+        timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
         res.json({
@@ -102,11 +103,12 @@ export const removeMember = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id })
         await timeline.members.pull(req.body.memberId)
+        timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
         res.json({
             type: "UPDATE",
-            message: `removed member: ${req.params.id} from timeline: ${updatedTimeline.title}`,
+            message: `removed member: ${req.body.memberId} from timeline: ${updatedTimeline.title}`,
             data: updatedTimeline
         })
     }
@@ -114,6 +116,49 @@ export const removeMember = async (req, res, next) => {
         res.status(400).json({
             type: "ERROR",
             message: `failed to remove member ${req.params.id} from timeline: ${timeline.title}`
+        })
+    }
+}
+
+// ADD TAG TO TIMELINE
+export const addTag = async (req, res, next) => {
+    try {
+        const timeline = await Timeline.findOne({ _id: req.params.id })
+        await timeline.tags.push(req.body.tag)
+        timeline.updated_at = Date.now()
+        const updatedTimeline = await timeline.save()
+
+        res.json({
+            type: "UPDATE",
+            message: `added tag: ${req.body.tag} to timeline: ${updatedTimeline._id}`,
+            data: updatedTimeline
+        })
+    }
+    catch(e) {
+        res.status(400).json({
+            type: "ERROR",
+            message: `failed to add tag: ${req.body.tag} to timeline: ${timeline._id}`
+        })
+    }
+}
+// REMOVE TAG FROM TIMELINE
+export const deleteTag = async (req, res, next) => {
+    try {
+        const timeline = await Timeline.findOne({ _id: req.params.id })
+        await timeline.tags.pull(req.body.tag)
+        timeline.updated_at = Date.now()
+        const updatedTimeline = await timeline.save()
+
+        res.json({
+            type: "UPDATE",
+            message: `deleted tag: ${req.body.tag} from timeline: ${updatedTimeline._id}`,
+            data: updatedTimeline
+        })
+    }
+    catch(e) {
+        res.status(400).json({
+            type: "ERROR",
+            message: `failed to delete tag: ${req.body.tag} from timeline: ${timeline._id}`
         })
     }
 }
