@@ -48,6 +48,7 @@ export const createNode = async (req, res, next) => {
         // create node with timeline id, add node id to timeline.nodes
         const node = await new Node({ ...req.body, timeline: timeline._id }).save()
         await timeline.nodes.push(node._id)
+        timeline.updated_at = Date.now()
         await timeline.save()
     
         res.json({

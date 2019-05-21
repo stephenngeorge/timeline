@@ -7,3 +7,6 @@
 
 [ ] -- timeline updated_at changes on node updates
 [ ] -- consider updated_at being array of objects: { timestamp: Date.now, description: String } <-- e.g. 'removed Node: NODE_ID' || 'updated title of Timeline: TIMELINE_ID'
+
+[ ] -- Node model needs .deadline property, type: Date (not required, no default)
+deadline: Date
