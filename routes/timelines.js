@@ -7,7 +7,7 @@ import { timelinesController } from '../controllers'
 const router = new Router()
 
 // GET ALL TIMELINES FOR GIVEN USER
-router.get('/:userId', verifyAuth, timelinesController.getAllTimelines)
+router.get('/user/:userId', verifyAuth, timelinesController.getAllTimelines)
 // GET SINGLE TIMELINE BY ID
 router.get('/:id', verifyAuth, timelinesController.getSingleTimeline)
 

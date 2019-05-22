@@ -4,16 +4,17 @@ import { Node, Timeline } from '../models'
 export const getAllNodes = async (req, res, next) => {
     try {
         const nodes = await Node.find({ timeline: req.params.timelineId }).populate('timeline').exec()
-        res.json({
+        return res.json({
             type: "READ",
             message: `found all nodes for timeline: ${req.params.timelineId}`,
             data: nodes
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to find nodes for timeline: ${req.params.timelineId}`
+            message: `failed to find nodes for timeline: ${req.params.timelineId}`,
+            data: e
         })
     }
 }
@@ -21,16 +22,17 @@ export const getAllNodes = async (req, res, next) => {
 export const getSingleNode = async (req, res, next) => {
     try {
         const node = await Node.findOne({ _id: req.params.id }).populate('timeline').exec()
-        res.json({
+        return res.json({
             type: "READ",
             message: `found node: ${req.params.id}`,
             data: node
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to find node: ${req.params.id}`
+            message: `failed to find node: ${req.params.id}`,
+            data: e
         })
     }
 }
@@ -51,16 +53,17 @@ export const createNode = async (req, res, next) => {
         timeline.updated_at = Date.now()
         await timeline.save()
     
-        res.json({
+        return res.json({
             type: "CREATE",
             message: `created node: ${node.title}`,
             data: node
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to create node: ${req.body.title}`
+            message: `failed to create node: ${req.body.title}`,
+            data: e
         })
     }
 }
@@ -71,16 +74,17 @@ export const updateNode = async (req, res, next) => {
         const updatedNode = await Node.findOneAndUpdate({ _id: req.params.id }, {...req.body, updated_at: Date.now()}, { new: true })
         const timeline = await Timeline.findOne({ _id: updatedNode.timeline })
         timeline.updated_at = Date.now()
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `updated node: ${updatedNode.title}`,
             data: updatedNode
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to update node: ${ req.params.id }`
+            message: `failed to update node: ${ req.params.id }`,
+            data: e
         })
     }
 }
@@ -102,16 +106,17 @@ export const deleteNode = async (req, res, next) => {
         timeline.updated_at = Date.now()
         await timeline.save()
 
-        res.json({
+        return res.json({
             type: "DELETE",
             message: `deleted node: ${deletedNode.title}`,
             data: deletedNode
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to delete node: ${req.params.id}`
+            message: `failed to delete node: ${req.params.id}`,
+            data: e
         })
     }
 }

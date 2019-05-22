@@ -4,16 +4,17 @@ import { Node, Timeline, User } from '../models'
 export const getAllTimelines = async (req, res, next) => {
     try {
         const timelines = await Timeline.find({ author: req.params.userId })
-        res.json({
+        return res.json({
             type: "READ",
             message: `found all timelines for user: ${req.params.userId}`,
             data: timelines
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to find timelines for user: ${req.params.userId}`
+            message: `failed to find timelines for user: ${req.params.userId}`,
+            data: e
         })
     }
 }
@@ -21,16 +22,17 @@ export const getAllTimelines = async (req, res, next) => {
 export const getSingleTimeline = async (req, res, next) => {
     try {
         const timeline = await Timeline.findOne({ _id: req.params.id }).populate('author').populate('nodes').exec()
-        res.json({
+        return res.json({
             type: "READ",
             message: `found timeline: ${timeline.title}`,
             data: timeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to find timeline ${req.params.id}`
+            message: `failed to find timeline ${req.params.id}`,
+            data: e
         })
     }
 }
@@ -45,16 +47,17 @@ export const createTimeline = async (req, res, next) => {
         await author.timelines.push(timeline._id)
         await author.save()
 
-        res.json({
+        return res.json({
             type: "CREATE",
             message: `created timeline: ${timeline.title}`,
             data: timeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to create timeline: ${req.body.title}`
+            message: `failed to create timeline: ${req.body.title}`,
+            data: e
         })
     }
 }
@@ -68,16 +71,17 @@ export const updateTimeline = async (req, res, next) => {
             const error = new Error('you are not the author of this timeline')
             next(error)
         }
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `updated timeline: ${updatedTimeline.title}`,
             data: updatedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to update timeline: ${req.params.id}`
+            message: `failed to update timeline: ${req.params.id}`,
+            data: e
         })
     }
 }
@@ -95,16 +99,17 @@ export const addMember = async (req, res, next) => {
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `added member: ${req.params.id} to timeline: ${updatedTimeline.title}`,
             data: updatedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to add member: ${req.params.id} to timeline: ${timeline.title}`
+            message: `failed to add member: ${req.params.id} to timeline: ${timeline.title}`,
+            data: e
         })
     }
 }
@@ -121,16 +126,17 @@ export const removeMember = async (req, res, next) => {
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `removed member: ${req.body.memberId} from timeline: ${updatedTimeline.title}`,
             data: updatedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to remove member ${req.params.id} from timeline: ${timeline.title}`
+            message: `failed to remove member ${req.params.id} from timeline: ${timeline.title}`,
+            data: e
         })
     }
 }
@@ -148,16 +154,17 @@ export const addTag = async (req, res, next) => {
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `added tag: ${req.body.tag} to timeline: ${updatedTimeline._id}`,
             data: updatedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to add tag: ${req.body.tag} to timeline: ${timeline._id}`
+            message: `failed to add tag: ${req.body.tag} to timeline: ${timeline._id}`,
+            data: e
         })
     }
 }
@@ -174,16 +181,17 @@ export const deleteTag = async (req, res, next) => {
         timeline.updated_at = Date.now()
         const updatedTimeline = await timeline.save()
 
-        res.json({
+        return res.json({
             type: "UPDATE",
             message: `deleted tag: ${req.body.tag} from timeline: ${updatedTimeline._id}`,
             data: updatedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to delete tag: ${req.body.tag} from timeline: ${timeline._id}`
+            message: `failed to delete tag: ${req.body.tag} from timeline: ${timeline._id}`,
+            data: e
         })
     }
 }
@@ -200,16 +208,17 @@ export const deleteTimeline = async (req, res, next) => {
         await author.timelines.pull(deletedTimeline._id)
         await author.save()
 
-        res.json({
+        return res.json({
             type: "DELETE",
             message: `deleted timeline: ${deletedTimeline.title}`,
             data: deletedTimeline
         })
     }
     catch(e) {
-        res.status(400).json({
+        return res.status(400).json({
             type: "ERROR",
-            message: `failed to delete timeline: ${req.params.id}`
+            message: `failed to delete timeline: ${req.params.id}`,
+            data: e
         })
     }
 }
