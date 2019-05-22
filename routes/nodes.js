@@ -8,7 +8,7 @@ import { nodesController } from '../controllers'
 const router = new Router()
 
 // GET ALL NODES FOR A GIVEN TIMELINE
-router.get('/:timelineId', verifyAuth, nodesController.getAllNodes)
+router.get('/timeline/:timelineId', verifyAuth, nodesController.getAllNodes)
 // GET SINGLE NODE BY ID
 router.get('/:id', verifyAuth, nodesController.getSingleNode)
 
