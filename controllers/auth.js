@@ -21,7 +21,7 @@ export const userCount = async (req, res, next) => {
 // GET SINGLE USER BY ID
 export const getSingleUser = async (req, res, next) => {
     try {
-        const user = await User.findOne({ _id: req.params.id }).populate('timelines').exec()
+        const user = await User.findOne({ _id: req.params.id }).populate('timelines')
         return res.json({
             type: "READ",
             message: `found user: ${user.username}`,
@@ -43,22 +43,18 @@ export const userSignUp = async (req, res, next) => {
         // check username availability
         const checkUsername = await User.find({ username: req.body.username })
         if (checkUsername.length !== 0) {
-            return res.status(400).json({
-                type: "ERROR",
-                message: `username: ${req.body.username} is taken`
-            })
+            const error = new Error('username not available')
+            next(error)
         }
         // create user if username is available
         // validate & hash password
         const validPassword = validate(req.body.password)
         if (!validPassword) {
-            return res.status(400).json({
-                type: "ERROR",
-                message: "invalid password"
-            })
+            const error = new Error('invalid password')
+            next(error)
         }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    
         // create new user
         const user = await new User({ ...req.body, password: hashedPassword }).save()
         return res.json({
@@ -68,17 +64,14 @@ export const userSignUp = async (req, res, next) => {
         })
     }
     catch(e) {
-        return res.status(400).json({
-            type: "ERROR",
-            message: `failed to create user: ${req.body.username}`,
-            data: e
-        })
+        const error = new Error(`failed to create user: ${req.body.username} | error: ${e}`)
+        next(error)
     }
 }
 // LOGIN USER WITH USERNAME & PASSWORD
 export const userLogin = async (req, res, next) => {
     try {
-        const user = await User.find({ username: req.body.username })
+        const user = await User.findOne({ username: req.body.username }).populate('timelines')
         if (user.length === 0) {
             return res.status(401).json({
                 type: "ERROR",
@@ -87,7 +80,7 @@ export const userLogin = async (req, res, next) => {
         }
         // continue login if user is found
         // compare passwords
-        const checkPassword = await bcrypt.compare(req.body.password, user[0].password)
+        const checkPassword = await bcrypt.compare(req.body.password, user.password)
         if (!checkPassword) {
             return res.status(401).json({
                 type: "ERROR",
@@ -96,14 +89,15 @@ export const userLogin = async (req, res, next) => {
         }
         // if correct password, return user & JWT
         const token = jwt.sign({
-            username: user[0].username,
-            userId: user[0]._id
+            username: user.username,
+            userId: user._id
         }, process.env.JWT_KEY, { expiresIn: '1h' })
+        
         return res.status(200).json({
             type: "LOGIN",
-            message: `logged in user: ${user[0].username}`,
+            message: `logged in user: ${user.username}`,
             token,
-            data: user[0]
+            data: user
         })
     }
     catch(e) {
