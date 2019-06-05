@@ -8,7 +8,8 @@ const TimelineSchema = new Schema({
     nodes: [{type: Schema.Types.ObjectId, ref: 'node'}],
     tags: [String],
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
-    members: [{ type: Schema.Types.ObjectId, ref: 'user' }]
+    members: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    deadline: Date
 })
 
 export default model('timeline', TimelineSchema)

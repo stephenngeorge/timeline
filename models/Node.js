@@ -6,7 +6,8 @@ const NodeSchema = new Schema({
     status: { type: String, default: 'PENDING' },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
-    timeline: { type: Schema.Types.ObjectId, ref: 'timeline' }
+    timeline: { type: Schema.Types.ObjectId, ref: 'timeline' },
+    deadline: Date
 })
 
 export default model('node', NodeSchema)
