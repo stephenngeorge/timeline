@@ -21,7 +21,7 @@ export const getAllTimelines = async (req, res, next) => {
 // GET SINGLE TIMELINE BY ID
 export const getSingleTimeline = async (req, res, next) => {
     try {
-        const timeline = await Timeline.findOne({ _id: req.params.id }).populate('author').populate('nodes').exec()
+        const timeline = await Timeline.findOne({ _id: req.params.id }).populate('nodes')
         return res.json({
             type: "READ",
             message: `found timeline: ${timeline.title}`,

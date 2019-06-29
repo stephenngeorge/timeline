@@ -9,7 +9,8 @@ const TimelineSchema = new Schema({
     tags: [String],
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     members: [{ type: Schema.Types.ObjectId, ref: 'user' }],
-    deadline: Date
+    deadline: Date,
+    status: { type: String, default: 'ACTIVE' }
 })
 
 export default model('timeline', TimelineSchema)
